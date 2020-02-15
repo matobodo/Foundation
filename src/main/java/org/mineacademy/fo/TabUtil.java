@@ -1,21 +1,20 @@
 package org.mineacademy.fo;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import lombok.experimental.UtilityClass;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Utility class for tab completion.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class TabUtil {
+
+@UtilityClass
+public class TabUtil {
 
 	/**
 	 * A shortcut for completing player names from all players connected online
@@ -23,7 +22,7 @@ public final class TabUtil {
 	 * @param partialName
 	 * @return
 	 */
-	public static List<String> completePlayerName(String partialName) {
+	public List<String> completePlayerName(String partialName) {
 		return complete(partialName, Common.getPlayerNames());
 	}
 
@@ -37,7 +36,7 @@ public final class TabUtil {
 	 * @param all
 	 * @return
 	 */
-	public static <T> List<String> complete(String partialName, T... all) {
+	public <T> List<String> complete(String partialName, T... all) {
 		final List<String> clone = new ArrayList<>();
 
 		for (final T s : all)
@@ -75,7 +74,7 @@ public final class TabUtil {
 	 * @param all
 	 * @return
 	 */
-	public static List<String> complete(String partialName, Iterable<String> all) {
+	public List<String> complete(String partialName, Iterable<String> all) {
 		final ArrayList<String> tab = new ArrayList<>();
 
 		for (final String s : all)
@@ -83,7 +82,7 @@ public final class TabUtil {
 
 		partialName = partialName.toLowerCase();
 
-		for (final Iterator<String> iterator = tab.iterator(); iterator.hasNext();) {
+		for (final Iterator<String> iterator = tab.iterator(); iterator.hasNext(); ) {
 			final String val = iterator.next();
 
 			if (!val.toLowerCase().startsWith(partialName))

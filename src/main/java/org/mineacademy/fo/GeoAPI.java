@@ -1,31 +1,25 @@
 package org.mineacademy.fo;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.UtilityClass;
+import org.mineacademy.fo.collection.StrictMap;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetSocketAddress;
-import java.net.NoRouteToHostException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLConnection;
-
-import org.mineacademy.fo.collection.StrictMap;
-
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import java.net.*;
 
 /**
  * Utility class for resolving geographical information about players.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class GeoAPI {
+@UtilityClass
+public class GeoAPI {
 
 	/**
 	 * The cached responses per IP addresses
 	 */
-	private static final StrictMap<String, GeoResponse> cache = new StrictMap<>();
+	private final StrictMap<String, GeoResponse> cache = new StrictMap<>();
 
 	/**
 	 * Returns a {@link GeoResponse} with geographic data for the given IP address
@@ -33,7 +27,7 @@ public final class GeoAPI {
 	 * @param ip
 	 * @return
 	 */
-	public static GeoResponse getCountry(InetSocketAddress ip) {
+	public GeoResponse getCountry(InetSocketAddress ip) {
 		GeoResponse response = new GeoResponse("", "", "", "");
 
 		if (ip == null)
@@ -73,7 +67,7 @@ public final class GeoAPI {
 		return response;
 	}
 
-	private static String getJson(String page, String element) {
+	private String getJson(String page, String element) {
 		return page.contains("\"" + element + "\":\"") ? page.split("\"" + element + "\":\"")[1].split("\",")[0] : "";
 	}
 
@@ -82,7 +76,7 @@ public final class GeoAPI {
 	 */
 	@RequiredArgsConstructor
 	@Getter
-	public static final class GeoResponse {
+	public final static class GeoResponse {
 		private final String countryName, countryCode, regionName, isp;
 	}
 }

@@ -1,28 +1,26 @@
 package org.mineacademy.fo;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
+import lombok.experimental.UtilityClass;
 import org.mineacademy.fo.exception.FoException;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * Utility class for calculating time from ticks and back.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class TimeUtil {
+@UtilityClass
+public class TimeUtil {
 
 	/**
 	 * The date format in dd.MM.yyy HH:mm:ss
 	 */
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+	private final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
 	/**
 	 * The date format in dd.MM.yyy HH:mm
 	 */
-	private static final DateFormat DATE_FORMAT_SHORT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+	private final DateFormat DATE_FORMAT_SHORT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
 	// ------------------------------------------------------------------------------------------------------------
 	// Current time
@@ -33,7 +31,7 @@ public final class TimeUtil {
 	 *
 	 * @return System.currentTimeMillis / 1000
 	 */
-	public static long currentTimeSeconds() {
+	public long currentTimeSeconds() {
 		return System.currentTimeMillis() / 1000;
 	}
 
@@ -42,7 +40,7 @@ public final class TimeUtil {
 	 *
 	 * @return System.currentTimeMillis / 50
 	 */
-	public static long currentTimeTicks() {
+	public long currentTimeTicks() {
 		return System.currentTimeMillis() / 50;
 	}
 
@@ -55,7 +53,7 @@ public final class TimeUtil {
 	 *
 	 * @return
 	 */
-	public static String getFormattedDate() {
+	public String getFormattedDate() {
 		return getFormattedDate(System.currentTimeMillis());
 	}
 
@@ -66,7 +64,7 @@ public final class TimeUtil {
 	 * @param time
 	 * @return
 	 */
-	public static String getFormattedDate(long time) {
+	public String getFormattedDate(long time) {
 		return DATE_FORMAT.format(time);
 	}
 
@@ -75,7 +73,7 @@ public final class TimeUtil {
 	 *
 	 * @return
 	 */
-	public static String getFormattedDateShort() {
+	public String getFormattedDateShort() {
 		return DATE_FORMAT_SHORT.format(System.currentTimeMillis());
 	}
 
@@ -86,7 +84,7 @@ public final class TimeUtil {
 	 * @param time
 	 * @return
 	 */
-	public static String getFormattedDateShort(long time) {
+	public String getFormattedDateShort(long time) {
 		return DATE_FORMAT_SHORT.format(time);
 	}
 
@@ -99,11 +97,10 @@ public final class TimeUtil {
 	 * to seconds.
 	 *
 	 * @param humanReadableTime the human readable time format: {time} {period}
-	 * 		  	   example: 5 seconds, 10 ticks, 7 minutes, 12 hours etc..
-	 *
+	 *                          example: 5 seconds, 10 ticks, 7 minutes, 12 hours etc..
 	 * @return the converted human time to seconds
 	 */
-	public static long toTicks(String humanReadableTime) {
+	public long toTicks(String humanReadableTime) {
 		Valid.checkNotNull(humanReadableTime, "Time is null");
 
 		long seconds = 0L;
@@ -157,13 +154,13 @@ public final class TimeUtil {
 
 	/**
 	 * Formats the given time from seconds into the following format:
-	 *
+	 * <p>
 	 * "1 hour 50 minutes 10 seconds" or similar, or less
 	 *
 	 * @param seconds
 	 * @return
 	 */
-	public static String formatTimeGeneric(long seconds) {
+	public String formatTimeGeneric(long seconds) {
 		final long second = seconds % 60;
 		long minute = seconds / 60;
 		String hourMsg = "";
@@ -184,7 +181,7 @@ public final class TimeUtil {
 	 * @param seconds
 	 * @return
 	 */
-	public static String formatTimeDays(long seconds) {
+	public String formatTimeDays(long seconds) {
 		final long minutes = seconds / 60;
 		final long hours = minutes / 60;
 		final long days = hours / 24;
@@ -199,7 +196,7 @@ public final class TimeUtil {
 	 * @param seconds
 	 * @return
 	 */
-	public static String formatTimeShort(long seconds) {
+	public String formatTimeShort(long seconds) {
 		long minutes = seconds / 60;
 		long hours = minutes / 60;
 		final long days = hours / 24;

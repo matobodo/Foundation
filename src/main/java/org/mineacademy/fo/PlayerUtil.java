@@ -1,21 +1,9 @@
 package org.mineacademy.fo;
 
-import java.io.File;
-import java.io.FileReader;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 import org.apache.commons.lang.ArrayUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Statistic;
+import org.bukkit.*;
 import org.bukkit.Statistic.Type;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -40,34 +28,35 @@ import org.mineacademy.fo.plugin.SimplePlugin;
 import org.mineacademy.fo.remain.CompMaterial;
 import org.mineacademy.fo.remain.Remain;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import java.io.File;
+import java.io.FileReader;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Utility class for managing players.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class PlayerUtil {
+@UtilityClass
+public class PlayerUtil {
 
 	/**
 	 * Spigot 1.9, for whatever reason, decided to merge the armor and main player inventories without providing a way
 	 * to access the main inventory. There's lots of ugly code in here to work around that.
 	 */
-	public static final int USABLE_PLAYER_INV_SIZE = 36;
+	public final int USABLE_PLAYER_INV_SIZE = 36;
 
 	/**
 	 * Stores a list of currently pending title animation tasks to restore the tile to its original one
 	 */
-	private static final Map<UUID, BukkitTask> titleRestoreTasks = new ConcurrentHashMap<>();
+	private final Map<UUID, BukkitTask> titleRestoreTasks = new ConcurrentHashMap<>();
 
 	/**
 	 * The default duration of the new animated title before
 	 * it is reverted back to the old one
-	 *
+	 * <p>
 	 * Used in {@link #updateInventoryTitle(Menu, Player, String, String)}
 	 */
-	public static int ANIMATION_DURATION_TICKS = 20;
+	public int ANIMATION_DURATION_TICKS = 20;
 
 	// ------------------------------------------------------------------------------------------------------------
 	// Misc
@@ -79,7 +68,7 @@ public final class PlayerUtil {
 	 * @param player
 	 * @param message
 	 */
-	public static void kick(final Player player, final String... message) {
+	public void kick(final Player player, final String... message) {
 		Common.runLater(() -> player.kickPlayer(Common.colorize(message)));
 	}
 
@@ -89,7 +78,7 @@ public final class PlayerUtil {
 	 * @param player
 	 * @return
 	 */
-	public static int getPing(Player player) {
+	public int getPing(Player player) {
 		final Object entityPlayer = Remain.getHandleEntity(player);
 
 		return (int) ReflectionUtil.getFieldContent(entityPlayer, "ping");
@@ -101,7 +90,7 @@ public final class PlayerUtil {
 	 * @param statistic
 	 * @return
 	 */
-	public static TreeMap<Long, OfflinePlayer> getStatistics(Statistic statistic) {
+	public TreeMap<Long, OfflinePlayer> getStatistics(Statistic statistic) {
 		return getStatistics(statistic, null, null);
 	}
 
@@ -112,7 +101,7 @@ public final class PlayerUtil {
 	 * @param material
 	 * @return
 	 */
-	public static TreeMap<Long, OfflinePlayer> getStatistics(Statistic statistic, Material material) {
+	public TreeMap<Long, OfflinePlayer> getStatistics(Statistic statistic, Material material) {
 		return getStatistics(statistic, material, null);
 	}
 
@@ -123,7 +112,7 @@ public final class PlayerUtil {
 	 * @param entityType
 	 * @return
 	 */
-	public static TreeMap<Long, OfflinePlayer> getStatistics(Statistic statistic, EntityType entityType) {
+	public TreeMap<Long, OfflinePlayer> getStatistics(Statistic statistic, EntityType entityType) {
 		return getStatistics(statistic, null, entityType);
 	}
 
@@ -135,7 +124,7 @@ public final class PlayerUtil {
 	 * @param entityType
 	 * @return
 	 */
-	public static TreeMap<Long, OfflinePlayer> getStatistics(Statistic statistic, Material material, EntityType entityType) {
+	public TreeMap<Long, OfflinePlayer> getStatistics(Statistic statistic, Material material, EntityType entityType) {
 		final TreeMap<Long, OfflinePlayer> statistics = new TreeMap<>(Collections.reverseOrder());
 
 		for (final OfflinePlayer offline : Bukkit.getOfflinePlayers()) {
@@ -154,7 +143,7 @@ public final class PlayerUtil {
 	 * @param statistic
 	 * @return
 	 */
-	public static long getStatistic(OfflinePlayer player, Statistic statistic) {
+	public long getStatistic(OfflinePlayer player, Statistic statistic) {
 		return getStatistic(player, statistic, null, null);
 	}
 
@@ -166,7 +155,7 @@ public final class PlayerUtil {
 	 * @param material
 	 * @return
 	 */
-	public static long getStatistic(OfflinePlayer player, Statistic statistic, Material material) {
+	public long getStatistic(OfflinePlayer player, Statistic statistic, Material material) {
 		return getStatistic(player, statistic, material, null);
 	}
 
@@ -178,7 +167,7 @@ public final class PlayerUtil {
 	 * @param entityType
 	 * @return
 	 */
-	public static long getStatistic(OfflinePlayer player, Statistic statistic, EntityType entityType) {
+	public long getStatistic(OfflinePlayer player, Statistic statistic, EntityType entityType) {
 		return getStatistic(player, statistic, null, entityType);
 	}
 
@@ -189,7 +178,7 @@ public final class PlayerUtil {
 	 * @param statistic
 	 * @return
 	 */
-	private static long getStatistic(OfflinePlayer player, Statistic statistic, Material material, EntityType entityType) {
+	private long getStatistic(OfflinePlayer player, Statistic statistic, Material material, EntityType entityType) {
 		// Return live statistic for up to date data and best performance if possible
 		if (player.isOnline()) {
 			final Player online = player.getPlayer();
@@ -208,7 +197,7 @@ public final class PlayerUtil {
 	}
 
 	// Read json file for the statistic
-	private static long getStatisticFile(OfflinePlayer player, Statistic statistic, Material material, EntityType entityType) {
+	private long getStatisticFile(OfflinePlayer player, Statistic statistic, Material material, EntityType entityType) {
 		final File worldFolder = new File(Bukkit.getServer().getWorlds().get(0).getWorldFolder(), "stats");
 		final File statFile = new File(worldFolder, player.getUniqueId().toString() + ".json");
 
@@ -258,7 +247,7 @@ public final class PlayerUtil {
 	 * @deprecated returns false if failed for whatever reason
 	 */
 	@Deprecated
-	public static boolean hasPermUnsafe(UUID id, String permission) {
+	public boolean hasPermUnsafe(UUID id, String permission) {
 		return HookManager.hasPermissionUnsafe(id, permission.replace("{plugin.name}", SimplePlugin.getNamed().toLowerCase()));
 	}
 
@@ -271,7 +260,7 @@ public final class PlayerUtil {
 	 * @deprecated returns false if failed for whatever reason, also can connect to the internet for UUID lookup on the main thread
 	 */
 	@Deprecated
-	public static boolean hasPermUnsafe(String playerName, String permission) {
+	public boolean hasPermUnsafe(String playerName, String permission) {
 		return HookManager.hasPermissionUnsafe(playerName, permission.replace("{plugin.name}", SimplePlugin.getNamed().toLowerCase()));
 	}
 
@@ -285,7 +274,7 @@ public final class PlayerUtil {
 	 * dataset, so this should not be relied on.
 	 */
 	@Deprecated
-	public static boolean hasPermVault(Player player, String permission) {
+	public boolean hasPermVault(Player player, String permission) {
 		return permission == null || HookManager.hasPermissionVault(player, permission.replace("{plugin.name}", SimplePlugin.getNamed().toLowerCase()));
 	}
 
@@ -297,7 +286,7 @@ public final class PlayerUtil {
 	 * @param permission
 	 * @return
 	 */
-	public static boolean hasPerm(@NonNull Permissible sender, String permission) {
+	public boolean hasPerm(@NonNull Permissible sender, String permission) {
 		return permission == null || sender.hasPermission(permission.replace("{plugin.name}", SimplePlugin.getNamed().toLowerCase()));
 	}
 
@@ -308,35 +297,35 @@ public final class PlayerUtil {
 	/**
 	 * Sets pretty much every flag the player can have such as
 	 * flying etc, back to normal
-	 *
+	 * <p>
 	 * Also sets gamemode to survival
-	 *
+	 * <p>
 	 * Typical usage: Minigame plugins - call this before joining the player to an arena
-	 *
+	 * <p>
 	 * Even disables Essentials god mode and removes vanish (most vanish plugins are supported).
 	 *
 	 * @param player
 	 * @param cleanInventory
 	 */
-	public static void normalize(Player player, boolean cleanInventory) {
+	public void normalize(Player player, boolean cleanInventory) {
 		normalize(player, cleanInventory, true);
 	}
 
 	/**
 	 * Sets pretty much every flag the player can have such as
 	 * flying etc, back to normal
-	 *
+	 * <p>
 	 * Also sets gamemode to survival
-	 *
+	 * <p>
 	 * Typical usage: Minigame plugins - call this before joining the player to an arena
-	 *
+	 * <p>
 	 * Even disables Essentials god mode.
 	 *
 	 * @param player
 	 * @param cleanInventory
-	 * @param removeVanish should we remove vanish from players? most vanish plugins are supported
+	 * @param removeVanish   should we remove vanish from players? most vanish plugins are supported
 	 */
-	public static void normalize(Player player, boolean cleanInventory, boolean removeVanish) {
+	public void normalize(Player player, boolean cleanInventory, boolean removeVanish) {
 		synchronized (titleRestoreTasks) {
 			HookManager.setGodMode(player, false);
 
@@ -367,7 +356,8 @@ public final class PlayerUtil {
 				player.setInvulnerable(false);
 				player.setSilent(false);
 			} catch (final NoSuchMethodError err) {
-				/* old MC */}
+				/* old MC */
+			}
 
 			player.setAllowFlight(false);
 			player.setFlying(false);
@@ -387,7 +377,8 @@ public final class PlayerUtil {
 				for (final Entity passenger : player.getPassengers())
 					player.removePassenger(passenger);
 			} catch (final NoSuchMethodError err) {
-				/* old MC */}
+				/* old MC */
+			}
 
 			if (removeVanish)
 				try {
@@ -415,13 +406,14 @@ public final class PlayerUtil {
 	 *
 	 * @param player
 	 */
-	public static void cleanInventoryAndFood(Player player) {
+	public void cleanInventoryAndFood(Player player) {
 		player.getInventory().setArmorContents(null);
 		player.getInventory().setContents(new ItemStack[player.getInventory().getContents().length]);
 		try {
 			player.getInventory().setExtraContents(new ItemStack[player.getInventory().getExtraContents().length]);
 		} catch (final NoSuchMethodError err) {
-			/* old MC */}
+			/* old MC */
+		}
 
 		player.setFireTicks(0);
 		player.setFoodLevel(20);
@@ -437,7 +429,7 @@ public final class PlayerUtil {
 	 * @param player
 	 * @return
 	 */
-	public static boolean hasEmptyInventory(Player player) {
+	public boolean hasEmptyInventory(Player player) {
 		final ItemStack[] inv = player.getInventory().getContents();
 		final ItemStack[] armor = player.getInventory().getArmorContents();
 
@@ -461,7 +453,7 @@ public final class PlayerUtil {
 	 * @param otherPlayer
 	 * @return
 	 */
-	public static boolean isVanished(Player player, Player otherPlayer) {
+	public boolean isVanished(Player player, Player otherPlayer) {
 		return isVanished(player) || !otherPlayer.canSee(player);
 	}
 
@@ -472,7 +464,7 @@ public final class PlayerUtil {
 	 * @param player
 	 * @return
 	 */
-	public static boolean isVanished(Player player) {
+	public boolean isVanished(Player player) {
 		if (HookManager.isVanished(player))
 			return true;
 
@@ -496,7 +488,7 @@ public final class PlayerUtil {
 	 * @param name
 	 * @return
 	 */
-	public static Player getNickedNonVanishedPlayer(String name) {
+	public Player getNickedNonVanishedPlayer(String name) {
 		return getNickedPlayer(name, false);
 	}
 
@@ -507,7 +499,7 @@ public final class PlayerUtil {
 	 * @param ignoreVanished
 	 * @return
 	 */
-	public static Player getNickedPlayer(String name, boolean ignoreVanished) {
+	public Player getNickedPlayer(String name, boolean ignoreVanished) {
 		Player found = Bukkit.getPlayer(name);
 
 		if (found == null)
@@ -519,7 +511,7 @@ public final class PlayerUtil {
 		return found;
 	}
 
-	private static Player lookupNickedPlayer0(String name) {
+	private Player lookupNickedPlayer0(String name) {
 		Player found = null;
 		int delta = Integer.MAX_VALUE;
 
@@ -549,25 +541,25 @@ public final class PlayerUtil {
 	/**
 	 * Sends an animated title to player for the {@link #ANIMATION_DURATION_TICKS} duration. Colors are replaced
 	 *
-	 * @param menu the menu
-	 * @param player the player
+	 * @param menu           the menu
+	 * @param player         the player
 	 * @param temporaryTitle the animated title
-	 * @param oldTitle the old title
+	 * @param oldTitle       the old title
 	 */
-	public static void updateInventoryTitle(Menu menu, Player player, String temporaryTitle, String oldTitle) {
+	public void updateInventoryTitle(Menu menu, Player player, String temporaryTitle, String oldTitle) {
 		updateInventoryTitle(menu, player, temporaryTitle, oldTitle, ANIMATION_DURATION_TICKS);
 	}
 
 	/**
 	 * Sends an animated title to player. Colors are replaced.
 	 *
-	 * @param menu the menu
-	 * @param player the player
+	 * @param menu           the menu
+	 * @param player         the player
 	 * @param temporaryTitle the animated title
-	 * @param oldTitle the old title to revert to
-	 * @param duration the duration in ticks
+	 * @param oldTitle       the old title to revert to
+	 * @param duration       the duration in ticks
 	 */
-	public static void updateInventoryTitle(Menu menu, Player player, String temporaryTitle, String oldTitle, int duration) {
+	public void updateInventoryTitle(Menu menu, Player player, String temporaryTitle, String oldTitle, int duration) {
 		Valid.checkNotNull(menu, "Menu == null");
 		Valid.checkNotNull(player, "Player == null");
 		Valid.checkNotNull(temporaryTitle, "Title == null");
@@ -606,7 +598,7 @@ public final class PlayerUtil {
 	 * @param player the player
 	 * @param title  the new title
 	 */
-	public static void updateInventoryTitle(Player player, String title) {
+	public void updateInventoryTitle(Player player, String title) {
 		Remain.updateInventoryTitle(player, title);
 	}
 
@@ -619,10 +611,10 @@ public final class PlayerUtil {
 	 * to the given item.
 	 *
 	 * @param player
-	 * @param item the found item or null if none
+	 * @param item   the found item or null if none
 	 * @return
 	 */
-	public static ItemStack getFirstItem(Player player, ItemStack item) {
+	public ItemStack getFirstItem(Player player, ItemStack item) {
 		for (final ItemStack otherItem : player.getInventory().getContents())
 			if (otherItem != null && ItemUtil.isSimilar(otherItem, item))
 				return otherItem;
@@ -633,14 +625,14 @@ public final class PlayerUtil {
 	/**
 	 * Removes one piece of the given item stack, setting the slot to air
 	 * if the item is only 1 amount
-	 *
+	 * <p>
 	 * THIS SETS THE AMOUNT OF THE GIVEN ITEMSTACK TO -1 OF ITS CURRENT AMOUNT
 	 * AND DOES NOT AUTOMATICALLY REMOVE ITEMS
 	 *
 	 * @param player
 	 * @param item
 	 */
-	public static void takeOnePiece(Player player, ItemStack item) {
+	public void takeOnePiece(Player player, ItemStack item) {
 		Remain.takeItemOnePiece(player, item);
 	}
 
@@ -651,7 +643,7 @@ public final class PlayerUtil {
 	 * @param player
 	 * @param material
 	 */
-	public static void takeFirstOnePiece(Player player, CompMaterial material) {
+	public void takeFirstOnePiece(Player player, CompMaterial material) {
 		for (final ItemStack item : player.getInventory().getContents())
 			if (item != null && item.getType() == material.getMaterial()) {
 				takeOnePiece(player, item);
@@ -668,7 +660,7 @@ public final class PlayerUtil {
 	 * @param replaceWith
 	 * @return true if the replace was successful
 	 */
-	public static boolean updateInvSlot(Inventory inv, ItemStack search, ItemStack replaceWith) {
+	public boolean updateInvSlot(Inventory inv, ItemStack search, ItemStack replaceWith) {
 		Valid.checkNotNull(inv, "Inv = null");
 
 		for (int i = 0; i < inv.getSize(); i++) {
@@ -692,14 +684,14 @@ public final class PlayerUtil {
 	 * @param items
 	 * @return
 	 */
-	public static Map<Integer, ItemStack> addItems(final Inventory inventory, final ItemStack... items) {
+	public Map<Integer, ItemStack> addItems(final Inventory inventory, final ItemStack... items) {
 		return addItems(inventory, 0, items);
 	}
 
 	/**
 	 * Attempts to add items into the inventory,
 	 * returning what it couldn't store
-	 *
+	 * <p>
 	 * Set oversizedStack to below normal stack size to disable oversized stacks
 	 *
 	 * @param inventory
@@ -707,7 +699,7 @@ public final class PlayerUtil {
 	 * @param items
 	 * @return
 	 */
-	private static Map<Integer, ItemStack> addItems(final Inventory inventory, final int oversizedStacks, final ItemStack... items) {
+	private Map<Integer, ItemStack> addItems(final Inventory inventory, final int oversizedStacks, final ItemStack... items) {
 		if (isCombinedInv(inventory)) {
 			final Inventory fakeInventory = makeTruncatedInv((PlayerInventory) inventory);
 			final Map<Integer, ItemStack> overflow = addItems(fakeInventory, oversizedStacks, items);
@@ -802,7 +794,7 @@ public final class PlayerUtil {
 	 * @param maxAmount
 	 * @return
 	 */
-	private static int firstPartial(final Inventory inventory, final ItemStack item, final int maxAmount) {
+	private int firstPartial(final Inventory inventory, final ItemStack item, final int maxAmount) {
 		if (item == null)
 			return -1;
 		final ItemStack[] stacks = inventory.getContents();
@@ -820,7 +812,7 @@ public final class PlayerUtil {
 	 * @param playerInventory
 	 * @return
 	 */
-	private static Inventory makeTruncatedInv(PlayerInventory playerInventory) {
+	private Inventory makeTruncatedInv(PlayerInventory playerInventory) {
 		final Inventory fake = Bukkit.createInventory(null, USABLE_PLAYER_INV_SIZE);
 		fake.setContents(Arrays.copyOf(playerInventory.getContents(), fake.getSize()));
 
@@ -833,7 +825,7 @@ public final class PlayerUtil {
 	 * @param inventory
 	 * @return
 	 */
-	private static boolean isCombinedInv(Inventory inventory) {
+	private boolean isCombinedInv(Inventory inventory) {
 		return inventory instanceof PlayerInventory && inventory.getContents().length > USABLE_PLAYER_INV_SIZE;
 	}
 }

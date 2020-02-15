@@ -1,43 +1,42 @@
 package org.mineacademy.fo;
 
+import lombok.experimental.UtilityClass;
+
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
 /**
  * Utility class for mathematical operations.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class MathUtil {
+@UtilityClass
+public class MathUtil {
 
 	/**
 	 * Formatter that transforms whole numbers into whole decimals with 1 decimal point
 	 */
-	private final static DecimalFormat oneDigitFormat = new DecimalFormat("#.#");
+	private final DecimalFormat oneDigitFormat = new DecimalFormat("#.#");
 
 	/**
 	 * Formatter that transforms whole numbers into whole decimals with 2 decimal points
 	 */
-	private final static DecimalFormat twoDigitsFormat = new DecimalFormat("#.##");
+	private final DecimalFormat twoDigitsFormat = new DecimalFormat("#.##");
 
 	/**
 	 * Formatter that transforms whole numbers into whole decimals with 3 decimal points
 	 */
-	private final static DecimalFormat threeDigitsFormat = new DecimalFormat("#.###");
+	private final DecimalFormat threeDigitsFormat = new DecimalFormat("#.###");
 
 	/**
 	 * Formatter that transforms whole numbers into whole decimals with 5 decimal points
 	 */
-	private final static DecimalFormat fiveDigitsFormat = new DecimalFormat("#.#####");
+	private final DecimalFormat fiveDigitsFormat = new DecimalFormat("#.#####");
 
 	/**
 	 * Holds all valid roman numbers
 	 */
-	private final static NavigableMap<Integer, String> romanNumbers = new TreeMap<>();
+	private final NavigableMap<Integer, String> romanNumbers = new TreeMap<>();
 
 	// Load the roman numbers
 	static {
@@ -66,7 +65,7 @@ public final class MathUtil {
 	 * @param number
 	 * @return
 	 */
-	public static String toRoman(int number) {
+	public String toRoman(int number) {
 		final int literal = romanNumbers.floorKey(number);
 
 		if (number == literal)
@@ -81,7 +80,7 @@ public final class MathUtil {
 	 * @param d1
 	 * @return
 	 */
-	public static int floor(double d1) {
+	public int floor(double d1) {
 		final int i = (int) d1;
 
 		return d1 >= i ? i : i - 1;
@@ -93,7 +92,7 @@ public final class MathUtil {
 	 * @param f1
 	 * @return
 	 */
-	public static int ceiling(double f1) {
+	public int ceiling(double f1) {
 		final int i = (int) f1;
 
 		return f1 >= i ? i : i - 1;
@@ -103,11 +102,11 @@ public final class MathUtil {
 	 * See {@link #range(int, int, int)}
 	 *
 	 * @param value the real value
-	 * @param min the min limit
-	 * @param max the max limit
+	 * @param min   the min limit
+	 * @param max   the max limit
 	 * @return the value in range
 	 */
-	public static double range(double value, double min, double max) {
+	public double range(double value, double min, double max) {
 		return Math.min(Math.max(value, min), max);
 	}
 
@@ -115,11 +114,11 @@ public final class MathUtil {
 	 * Get a value in range. If the value is < min, returns min, if it is > max, returns max.
 	 *
 	 * @param value the real value
-	 * @param min the min limit
-	 * @param max the max limit
+	 * @param min   the min limit
+	 * @param max   the max limit
 	 * @return the value in range
 	 */
-	public static int range(int value, int min, int max) {
+	public int range(int value, int min, int max) {
 		return Math.min(Math.max(value, min), max);
 	}
 
@@ -130,7 +129,7 @@ public final class MathUtil {
 	 * @param min
 	 * @return
 	 */
-	public static double atLeast(double value, double min) {
+	public double atLeast(double value, double min) {
 		return value > min ? value : min;
 	}
 
@@ -141,7 +140,7 @@ public final class MathUtil {
 	 * @param min
 	 * @return
 	 */
-	public static int atLeast(int value, int min) {
+	public int atLeast(int value, int min) {
 		return value > min ? value : min;
 	}
 
@@ -152,7 +151,7 @@ public final class MathUtil {
 	 * @param percent
 	 * @return
 	 */
-	public static int increase(int number, double percent) {
+	public int increase(int number, double percent) {
 		final double myNumber = number;
 		final double percentage = myNumber / 100 * percent;
 
@@ -166,7 +165,7 @@ public final class MathUtil {
 	 * @param percent
 	 * @return
 	 */
-	public static double increase(double number, double percent) {
+	public double increase(double number, double percent) {
 		final double percentage = number / 100 * percent;
 
 		return number + percentage;
@@ -180,7 +179,7 @@ public final class MathUtil {
 	 * @param maximum
 	 * @return 0 to 100 of the given number portion of the maximum
 	 */
-	public static int percent(double number, double maximum) {
+	public int percent(double number, double maximum) {
 		return (int) (number / maximum * 100);
 	}
 
@@ -190,7 +189,7 @@ public final class MathUtil {
 	 * @param values
 	 * @return
 	 */
-	public static double average(Collection<Double> values) {
+	public double average(Collection<Double> values) {
 		return average(values.toArray(new Double[values.size()]));
 	}
 
@@ -200,7 +199,7 @@ public final class MathUtil {
 	 * @param values
 	 * @return
 	 */
-	public static double average(Double... values) {
+	public double average(Double... values) {
 		double sum = 0;
 
 		for (final double val : values)
@@ -219,7 +218,7 @@ public final class MathUtil {
 	 * @param value
 	 * @return
 	 */
-	public static String formatOneDigit(double value) {
+	public String formatOneDigit(double value) {
 		return oneDigitFormat.format(value).replace(",", ".");
 	}
 
@@ -229,7 +228,7 @@ public final class MathUtil {
 	 * @param value
 	 * @return
 	 */
-	public static double formatOneDigitD(double value) {
+	public double formatOneDigitD(double value) {
 		Valid.checkBoolean(!Double.isNaN(value), "Value must not be NaN");
 
 		return Double.parseDouble(oneDigitFormat.format(value).replace(",", "."));
@@ -241,7 +240,7 @@ public final class MathUtil {
 	 * @param value
 	 * @return
 	 */
-	public static String formatTwoDigits(double value) {
+	public String formatTwoDigits(double value) {
 		return twoDigitsFormat.format(value).replace(",", ".");
 	}
 
@@ -251,7 +250,7 @@ public final class MathUtil {
 	 * @param value
 	 * @return
 	 */
-	public static double formatTwoDigitsD(double value) {
+	public double formatTwoDigitsD(double value) {
 		Valid.checkBoolean(!Double.isNaN(value), "Value must not be NaN");
 
 		return Double.parseDouble(twoDigitsFormat.format(value).replace(",", "."));
@@ -263,7 +262,7 @@ public final class MathUtil {
 	 * @param value
 	 * @return
 	 */
-	public static String formatThreeDigits(double value) {
+	public String formatThreeDigits(double value) {
 		return threeDigitsFormat.format(value).replace(",", ".");
 	}
 
@@ -273,7 +272,7 @@ public final class MathUtil {
 	 * @param value
 	 * @return
 	 */
-	public static double formatThreeDigitsD(double value) {
+	public double formatThreeDigitsD(double value) {
 		Valid.checkBoolean(!Double.isNaN(value), "Value must not be NaN");
 
 		return Double.parseDouble(threeDigitsFormat.format(value).replace(",", "."));
@@ -285,7 +284,7 @@ public final class MathUtil {
 	 * @param value
 	 * @return
 	 */
-	public static String formatFiveDigits(double value) {
+	public String formatFiveDigits(double value) {
 		return fiveDigitsFormat.format(value).replace(",", ".");
 	}
 
@@ -295,7 +294,7 @@ public final class MathUtil {
 	 * @param value
 	 * @return
 	 */
-	public static double formatFiveDigitsD(double value) {
+	public double formatFiveDigitsD(double value) {
 		Valid.checkBoolean(!Double.isNaN(value), "Value must not be NaN");
 
 		return Double.parseDouble(fiveDigitsFormat.format(value).replace(",", "."));
@@ -311,7 +310,7 @@ public final class MathUtil {
 	 * @param expression
 	 * @return
 	 */
-	public static double calculate(final String expression) {
+	public double calculate(final String expression) {
 		class Parser {
 			int pos = -1, c;
 
@@ -344,7 +343,7 @@ public final class MathUtil {
 			double parseExpression() {
 				double v = parseTerm();
 
-				for (;;) {
+				for (; ; ) {
 					eatSpace();
 
 					if (c == '+') { // addition
@@ -362,7 +361,7 @@ public final class MathUtil {
 			double parseTerm() {
 				double v = parseFactor();
 
-				for (;;) {
+				for (; ; ) {
 					eatSpace();
 
 					if (c == '/') { // division
@@ -422,11 +421,11 @@ public final class MathUtil {
 
 	/**
 	 * An exception thrown when calculating wrong numbers (i.e. 0 division)
-	 *
+	 * <p>
 	 * See {@link MathUtil#calculate(String)}
 	 */
-	public static final class CalculatorException extends RuntimeException {
-		private static final long serialVersionUID = 1L;
+	public final static class CalculatorException extends RuntimeException {
+		private final long serialVersionUID = 1L;
 
 		public CalculatorException(String message) {
 			super(message);

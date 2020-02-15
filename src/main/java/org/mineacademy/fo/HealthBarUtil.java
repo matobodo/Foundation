@@ -1,29 +1,27 @@
 package org.mineacademy.fo;
 
+import lombok.experimental.UtilityClass;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.mineacademy.fo.remain.Remain;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
 /**
  * Utility class for displaying health bar above mobs.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class HealthBarUtil {
+@UtilityClass
+public class HealthBarUtil {
 
 	/**
 	 * The default prefix and suffix
 	 */
-	private static String PREFIX = "&8[", SUFFIX = "&8]";
+	private String PREFIX = "&8[", SUFFIX = "&8]";
 
 	/**
 	 * The default health bar colors
 	 */
-	private static ChatColor REMAINING_COLOR = ChatColor.DARK_RED, TOTAL_COLOR = ChatColor.GRAY, DEAD_COLOR = ChatColor.BLACK;
+	private ChatColor REMAINING_COLOR = ChatColor.DARK_RED, TOTAL_COLOR = ChatColor.GRAY, DEAD_COLOR = ChatColor.BLACK;
 
 	/**
 	 * Formats and displays the health bar as action bar.
@@ -33,7 +31,7 @@ public final class HealthBarUtil {
 	 * @param damage       the damage from {@link EntityDamageByEntityEvent} event,
 	 *                     or just set 0 to not subtract anything from health.
 	 */
-	public static void display(Player displayTo, LivingEntity displayAbout, double damage) {
+	public void display(Player displayTo, LivingEntity displayAbout, double damage) {
 		final int maxHealth = (int) displayAbout.getMaxHealth();
 		final int health = (int) displayAbout.getHealth();
 
@@ -44,14 +42,14 @@ public final class HealthBarUtil {
 	}
 
 	/* Creates a new health component */
-	private static String getHealthMessage(int health, int maxHealth, int damage) {
+	private String getHealthMessage(int health, int maxHealth, int damage) {
 		final int remainingHealth = health - damage;
 
 		return remainingHealth > 0 ? formatHealth(remainingHealth, maxHealth) : formatDeath(maxHealth);
 	}
 
 	/* Fills up the graphics of health indicator */
-	private static String formatHealth(int remainingHealth, int maxHealth) {
+	private String formatHealth(int remainingHealth, int maxHealth) {
 
 		if (maxHealth > 30)
 			return formatMuchHealth(remainingHealth, maxHealth);
@@ -74,12 +72,12 @@ public final class HealthBarUtil {
 	}
 
 	/* Fills up the graphics if the health is too high */
-	private static String formatMuchHealth(int remaining, int max) {
+	private String formatMuchHealth(int remaining, int max) {
 		return PREFIX + REMAINING_COLOR + remaining + " &8/ " + TOTAL_COLOR + max + SUFFIX;
 	}
 
 	/* Fills up the graphic if the health is 0 */
-	private static String formatDeath(int maxHealth) {
+	private String formatDeath(int maxHealth) {
 		String max = "";
 
 		if (maxHealth > 30)

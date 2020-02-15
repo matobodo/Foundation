@@ -1,14 +1,7 @@
 package org.mineacademy.fo;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -29,15 +22,15 @@ import org.mineacademy.fo.remain.CompMaterial;
 import org.mineacademy.fo.settings.YamlConfig;
 import org.mineacademy.fo.settings.YamlConfig.TimeHelper;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 /**
  * Utility class for serializing objects to writeable YAML data and back.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class SerializeUtil {
+@UtilityClass
+public class SerializeUtil {
 
 	/**
 	 * When serializing unknown objects throw an error if strict mode is enabled
@@ -46,7 +39,6 @@ public final class SerializeUtil {
 
 	/**
 	 * Special case: Support for GameAPI's ConfigSerializable interface
-	 *
 	 */
 	private static final Class<?> gameAPIserializeClass;
 
@@ -54,16 +46,16 @@ public final class SerializeUtil {
 	static {
 		Class<?> cl;
 
-		final char[] path = new char[] {
-				'o', 'r', 'g',
-				'.',
-				'm', 'i', 'n', 'e', 'a', 'c', 'a', 'd', 'e', 'm', 'y',
-				'.',
-				'g', 'a', 'm', 'e', 'a', 'p', 'i',
-				'.',
-				'm', 'i', 's', 'c',
-				'.',
-				'C', 'o', 'n', 'f', 'i', 'g', 'S', 'e', 'r', 'i', 'a', 'l', 'i', 'z', 'a', 'b', 'l', 'e'
+		final char[] path = new char[]{
+			'o', 'r', 'g',
+			'.',
+			'm', 'i', 'n', 'e', 'a', 'c', 'a', 'd', 'e', 'm', 'y',
+			'.',
+			'g', 'a', 'm', 'e', 'a', 'p', 'i',
+			'.',
+			'm', 'i', 's', 'c',
+			'.',
+			'C', 'o', 'n', 'f', 'i', 'g', 'S', 'e', 'r', 'i', 'a', 'l', 'i', 'z', 'a', 'b', 'l', 'e'
 		};
 
 		try {
@@ -146,9 +138,7 @@ public final class SerializeUtil {
 					serialized.add(serialize(element));
 
 			return serialized;
-		}
-
-		else if (obj instanceof StrictMap) {
+		} else if (obj instanceof StrictMap) {
 			final StrictMap<Object, Object> oldMap = (StrictMap<Object, Object>) obj;
 			final StrictMap<Object, Object> newMap = new StrictMap<>();
 
@@ -156,9 +146,7 @@ public final class SerializeUtil {
 				newMap.put(serialize(entry.getKey()), serialize(entry.getValue()));
 
 			return newMap;
-		}
-
-		else if (obj instanceof Map) {
+		} else if (obj instanceof Map) {
 			final Map<Object, Object> oldMap = (Map<Object, Object>) obj;
 			final Map<Object, Object> newMap = new HashMap<>();
 
@@ -166,15 +154,13 @@ public final class SerializeUtil {
 				newMap.put(serialize(entry.getKey()), serialize(entry.getValue()));
 
 			return newMap;
-		}
-
-		else if (obj instanceof YamlConfig)
+		} else if (obj instanceof YamlConfig)
 			throw new FoException("To save your YamlConfig " + obj.getClass().getSimpleName() + " make it implement ConfigSerializable!");
 
 		else if (obj instanceof Integer || obj instanceof Double || obj instanceof Float || obj instanceof Long
-				|| obj instanceof String || obj instanceof Boolean || obj instanceof Map
-				|| obj instanceof ItemStack
-		/*|| obj instanceof MemorySection*/)
+			|| obj instanceof String || obj instanceof Boolean || obj instanceof Map
+			|| obj instanceof ItemStack
+			/*|| obj instanceof MemorySection*/)
 			return obj;
 
 		else if (obj instanceof ConfigurationSerializable)
@@ -208,7 +194,7 @@ public final class SerializeUtil {
 
 	/**
 	 * Runsthrough each item in the list and serializes it
-	 *
+	 * <p>
 	 * Returns a new list of serialized items
 	 *
 	 * @param <T>
@@ -230,7 +216,7 @@ public final class SerializeUtil {
 
 	/**
 	 * Attempts to convert the given object into a class
-	 *
+	 * <p>
 	 * Example: Call deserialize(Location.class, "worldName 5 -1 47") to convert that into a Bukkit location object
 	 *
 	 * @param <T>

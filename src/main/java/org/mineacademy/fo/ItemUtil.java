@@ -1,5 +1,7 @@
 package org.mineacademy.fo;
 
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.UtilityClass;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -11,18 +13,14 @@ import org.mineacademy.fo.MinecraftVersion.V;
 import org.mineacademy.fo.plugin.SimplePlugin;
 import org.mineacademy.fo.remain.nbt.NBTItem;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-
 /**
  * Utility class for managing items.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ItemUtil {
+@UtilityClass
+public class ItemUtil {
 
 	// Is Minecraft older than 1.13? Storing here for best performance.
-	private static final boolean LEGACY_MATERIALS = MinecraftVersion.olderThan(V.v1_13);
+	private final boolean LEGACY_MATERIALS = MinecraftVersion.olderThan(V.v1_13);
 
 	// ----------------------------------------------------------------------------------------------------
 	// Converting strings into Bukkit item-related classes
@@ -35,7 +33,7 @@ public final class ItemUtil {
 	 * @param name
 	 * @return
 	 */
-	public static PotionEffectType findPotion(String name) {
+	public PotionEffectType findPotion(String name) {
 		name = PotionWrapper.getBukkitName(name);
 
 		final PotionEffectType potion = PotionEffectType.getByName(name);
@@ -51,7 +49,7 @@ public final class ItemUtil {
 	 * @param name
 	 * @return
 	 */
-	public static Enchantment findEnchantment(String name) {
+	public Enchantment findEnchantment(String name) {
 		Enchantment enchant = Enchantment.getByName(name.toLowerCase());
 
 		if (enchant == null)
@@ -80,7 +78,7 @@ public final class ItemUtil {
 	 * @param enumeration
 	 * @return
 	 */
-	public static String bountifyCapitalized(Enum<?> enumeration) {
+	public String bountifyCapitalized(Enum<?> enumeration) {
 		return bountifyCapitalized(enumeration.toString());
 	}
 
@@ -90,7 +88,7 @@ public final class ItemUtil {
 	 * @param name
 	 * @return
 	 */
-	public static String bountifyCapitalized(String name) {
+	public String bountifyCapitalized(String name) {
 		return WordUtils.capitalizeFully(bountify(name));
 	}
 
@@ -100,7 +98,7 @@ public final class ItemUtil {
 	 * @param enumeration
 	 * @return
 	 */
-	public static String bountify(PotionEffectType enumeration) {
+	public String bountify(PotionEffectType enumeration) {
 		return PotionWrapper.getLocalizedName(enumeration.getName());
 	}
 
@@ -110,7 +108,7 @@ public final class ItemUtil {
 	 * @param enchant
 	 * @return
 	 */
-	public static String bountify(Enchantment enchant) {
+	public String bountify(Enchantment enchant) {
 		return EnchantmentWrapper.toMinecraft(enchant.getName());
 	}
 
@@ -120,7 +118,7 @@ public final class ItemUtil {
 	 * @param enumeration
 	 * @return
 	 */
-	public static String bountify(Enum<?> enumeration) {
+	public String bountify(Enum<?> enumeration) {
 		return bountify(enumeration.toString());
 	}
 
@@ -130,7 +128,7 @@ public final class ItemUtil {
 	 * @param name
 	 * @return
 	 */
-	public static String bountify(String name) {
+	public String bountify(String name) {
 		return name.toLowerCase().replace("_", " ");
 	}
 
@@ -140,7 +138,7 @@ public final class ItemUtil {
 
 	/**
 	 * Compares two items. Returns true if they are similar.
-	 *
+	 * <p>
 	 * Two items are similar if both are not null and if their type, data, name and lore equals.
 	 * The damage, quantity, item flags enchants and other properties are ignored.
 	 *
@@ -148,7 +146,7 @@ public final class ItemUtil {
 	 * @param second
 	 * @return true if items are similar (see above)
 	 */
-	public static boolean isSimilar(ItemStack first, ItemStack second) {
+	public boolean isSimilar(ItemStack first, ItemStack second) {
 		if (first == null || second == null)
 			return false;
 
@@ -179,7 +177,7 @@ public final class ItemUtil {
 	}
 
 	// Compares the NBT string tag of two items
-	private static boolean matchNbt(String key, NBTItem firstNbt, NBTItem secondNbt) {
+	private boolean matchNbt(String key, NBTItem firstNbt, NBTItem secondNbt) {
 		final boolean firstHas = firstNbt.hasKey(key);
 		final boolean secondHas = secondNbt.hasKey(key);
 
@@ -208,7 +206,7 @@ enum PotionWrapper {
 	private final String bukkitName;
 	private final String minecraftName;
 
-	private PotionWrapper(String bukkitName) {
+	PotionWrapper(String bukkitName) {
 		this(bukkitName, null);
 	}
 

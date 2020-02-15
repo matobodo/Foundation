@@ -1,17 +1,10 @@
 package org.mineacademy.fo;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
-import org.bukkit.Chunk;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import com.google.common.collect.Sets;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.UtilityClass;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.FallingBlock;
@@ -22,49 +15,49 @@ import org.mineacademy.fo.MinecraftVersion.V;
 import org.mineacademy.fo.remain.CompMaterial;
 import org.mineacademy.fo.remain.Remain;
 
-import com.google.common.collect.Sets;
-
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * Utility class for block manipulation.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class BlockUtil {
+@UtilityClass
+public class BlockUtil {
 
 	/**
 	 * Matches all DOUBLE or STEP block names
 	 */
-	private static final Pattern SLAB_PATTERN = Pattern.compile("(?!DOUBLE).*STEP");
+	private final Pattern SLAB_PATTERN = Pattern.compile("(?!DOUBLE).*STEP");
 
 	/**
 	 * The block faces we use while searching for all parts of the given
 	 * tree upwards
 	 */
-	private static final BlockFace[] TREE_TRUNK_FACES = {
-			BlockFace.UP, /*BlockFace.DOWN,*/ BlockFace.WEST, BlockFace.EAST, BlockFace.NORTH, BlockFace.SOUTH
+	private final BlockFace[] TREE_TRUNK_FACES = {
+		BlockFace.UP, /*BlockFace.DOWN,*/ BlockFace.WEST, BlockFace.EAST, BlockFace.NORTH, BlockFace.SOUTH
 	};
 
 	/**
 	 * A list of safe blocks upon which a tree naturally grows
 	 */
-	private final static Set<String> TREE_GROUND_BLOCKS = Sets.newHashSet(
-			"GRASS_BLOCK", "COARSE_DIRT", "DIRT", "MYCELIUM", "PODZOL");
+	private final Set<String> TREE_GROUND_BLOCKS = Sets.newHashSet(
+		"GRASS_BLOCK", "COARSE_DIRT", "DIRT", "MYCELIUM", "PODZOL");
 
 	/**
 	 * The vertical gaps when creating locations for a bounding box,
 	 * see {@link #getBoundingBox(Location, Location)}
 	 */
-	public static double BOUNDING_VERTICAL_GAP = 1;
+	public double BOUNDING_VERTICAL_GAP = 1;
 
 	/**
 	 * The horizontal gaps when creating locations for a bounding box,
 	 * see {@link #getBoundingBox(Location, Location)}
 	 */
-	public static double BOUNDING_HORIZONTAL_GAP = 1;
+	public double BOUNDING_HORIZONTAL_GAP = 1;
 
 	// ------------------------------------------------------------------------------------------------------------
 	// Block manipulation
@@ -76,7 +69,7 @@ public final class BlockUtil {
 	 * @param player
 	 * @param block
 	 */
-	public static void destroyBlockSurvival(Player player, Block block) {
+	public void destroyBlockSurvival(Player player, Block block) {
 		if (player.getGameMode() != GameMode.CREATIVE)
 			block.breakNaturally();
 		else
@@ -95,7 +88,7 @@ public final class BlockUtil {
 	 * @param secondary
 	 * @return
 	 */
-	public static boolean isWithinCuboid(Location location, Location primary, Location secondary) {
+	public boolean isWithinCuboid(Location location, Location primary, Location secondary) {
 		return isWithinCuboid(location, primary.toVector(), secondary.toVector());
 	}
 
@@ -107,7 +100,7 @@ public final class BlockUtil {
 	 * @param secondary
 	 * @return
 	 */
-	public static boolean isWithinCuboid(Location location, Vector primary, Vector secondary) {
+	public boolean isWithinCuboid(Location location, Vector primary, Vector secondary) {
 		final double locX = location.getX();
 		final double locY = location.getY();
 		final double locZ = location.getZ();
@@ -136,7 +129,7 @@ public final class BlockUtil {
 	 * @param secondary
 	 * @return
 	 */
-	public static List<Location> getBoundingBox(Location primary, Location secondary) {
+	public List<Location> getBoundingBox(Location primary, Location secondary) {
 		final List<VectorHelper> ShapeVectors = new ArrayList<>();
 
 		final VectorHelper min = getMinimumPoint(primary, secondary);
@@ -176,7 +169,7 @@ public final class BlockUtil {
 		return locations;
 	}
 
-	private static List<VectorHelper> plotLine(VectorHelper p1, VectorHelper p2) {
+	private List<VectorHelper> plotLine(VectorHelper p1, VectorHelper p2) {
 		final List<VectorHelper> ShapeVectors = new ArrayList<>();
 
 		final int points = (int) (p1.distance(p2) / BOUNDING_HORIZONTAL_GAP) + 1;
@@ -200,7 +193,7 @@ public final class BlockUtil {
 
 	/**
 	 * Get all locations within the given 3D spherical radius, hollow or not
-	 *
+	 * <p>
 	 * NOTE: Calling this operation causes performance penaulty (>100ms for 30 radius!), be careful.
 	 *
 	 * @param location
@@ -208,7 +201,7 @@ public final class BlockUtil {
 	 * @param hollow
 	 * @return
 	 */
-	public static Set<Location> getSphere(Location location, int radius, boolean hollow) {
+	public Set<Location> getSphere(Location location, int radius, boolean hollow) {
 		final Set<Location> blocks = new HashSet<>();
 		final World world = location.getWorld();
 		final int X = location.getBlockX();
@@ -237,7 +230,7 @@ public final class BlockUtil {
 
 	/**
 	 * Get all locations within the given 2D circle radius, hollow or full circle
-	 *
+	 * <p>
 	 * NOTE: Calling this operation causes performance penaulty (>100ms for 30 radius!), be careful.
 	 *
 	 * @param location
@@ -245,7 +238,7 @@ public final class BlockUtil {
 	 * @param hollow
 	 * @return
 	 */
-	public static Set<Location> getCircle(Location location, int radius, boolean hollow) {
+	public Set<Location> getCircle(Location location, int radius, boolean hollow) {
 		final Set<Location> blocks = new HashSet<>();
 		final World world = location.getWorld();
 
@@ -278,7 +271,7 @@ public final class BlockUtil {
 	 * @param sphere
 	 * @return
 	 */
-	private static Set<Location> makeHollow(Set<Location> blocks, boolean sphere) {
+	private Set<Location> makeHollow(Set<Location> blocks, boolean sphere) {
 		final Set<Location> edge = new HashSet<>();
 
 		if (!sphere) {
@@ -333,7 +326,7 @@ public final class BlockUtil {
 	 * @param secondary
 	 * @return
 	 */
-	public static List<Block> getBlocks(final Location primary, final Location secondary) {
+	public List<Block> getBlocks(final Location primary, final Location secondary) {
 		Valid.checkNotNull(primary, "Primary region point must be set!");
 		Valid.checkNotNull(secondary, "Secondary region point must be set!");
 
@@ -367,10 +360,9 @@ public final class BlockUtil {
 	 * @param height how many blocks up to check
 	 * @param radius of the search (cubic search radius)
 	 * @param type   of Material to search for
-	 *
 	 * @return all the Block with the given Type in the specified radius
 	 */
-	public static List<Block> getBlocks(Location loc, int height, int radius) {
+	public List<Block> getBlocks(Location loc, int height, int radius) {
 		final List<Block> blocks = new ArrayList<>();
 
 		for (int y = 0; y < height; y++)
@@ -391,7 +383,7 @@ public final class BlockUtil {
 	 * @param radius
 	 * @return
 	 */
-	public static List<Chunk> getChunks(Location location, int radius) {
+	public List<Chunk> getChunks(Location location, int radius) {
 		final HashSet<Chunk> addedChunks = new HashSet<>();
 		final World world = location.getWorld();
 
@@ -408,14 +400,14 @@ public final class BlockUtil {
 
 	/**
 	 * Return all leaves/logs upwards connected to that given tree block
-	 *
+	 * <p>
 	 * Parts are sorted according to their Y coordinate from lowest to highest
 	 *
 	 * @param block
 	 * @param includeLeaves
 	 * @return
 	 */
-	public static List<Block> getTreePartsUp(Block treeBase) {
+	public List<Block> getTreePartsUp(Block treeBase) {
 		final Material baseMaterial = treeBase.getState().getType();
 
 		final String logType = MinecraftVersion.atLeast(V.v1_13) ? baseMaterial.toString() : "LOG";
@@ -467,7 +459,7 @@ public final class BlockUtil {
 	 * @param action
 	 * @return
 	 */
-	public static boolean canSetup(Block clicked, Action action) {
+	public boolean canSetup(Block clicked, Action action) {
 		return (action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK) && isForBlockSelection(clicked.getType());
 	}
 
@@ -478,7 +470,7 @@ public final class BlockUtil {
 	 * @param treeBaseBlock
 	 * @return if the bottom most connected block to the given block stays on {@link #TREE_GROUND_BLOCKS}
 	 */
-	public static boolean isLogOnGround(Block treeBaseBlock) {
+	public boolean isLogOnGround(Block treeBaseBlock) {
 
 		// Reach for the bottom most tree-like block
 		while (CompMaterial.isLog(treeBaseBlock.getType()))
@@ -492,20 +484,19 @@ public final class BlockUtil {
 	 * ground?
 	 *
 	 * @param material to check
-	 *
 	 * @return boolean
 	 */
-	public static boolean isBreakingFallingBlock(Material material) {
+	public boolean isBreakingFallingBlock(Material material) {
 		return material.isTransparent() &&
-				material != CompMaterial.NETHER_PORTAL.getMaterial() &&
-				material != CompMaterial.END_PORTAL.getMaterial() ||
-				material == CompMaterial.COBWEB.getMaterial() ||
-				material == Material.DAYLIGHT_DETECTOR ||
-				CompMaterial.isTrapDoor(material) ||
-				material == CompMaterial.SIGN.getMaterial() ||
-				CompMaterial.isWallSign(material) ||
-				// Match all slabs besides double slab
-				SLAB_PATTERN.matcher(material.name()).matches();
+			material != CompMaterial.NETHER_PORTAL.getMaterial() &&
+			material != CompMaterial.END_PORTAL.getMaterial() ||
+			material == CompMaterial.COBWEB.getMaterial() ||
+			material == Material.DAYLIGHT_DETECTOR ||
+			CompMaterial.isTrapDoor(material) ||
+			material == CompMaterial.SIGN.getMaterial() ||
+			CompMaterial.isWallSign(material) ||
+			// Match all slabs besides double slab
+			SLAB_PATTERN.matcher(material.name()).matches();
 	}
 
 	/**
@@ -514,17 +505,17 @@ public final class BlockUtil {
 	 * @param material
 	 * @return
 	 */
-	public static boolean isTool(Material material) {
+	public boolean isTool(Material material) {
 		return material.name().endsWith("AXE") // axe & pickaxe
-				|| material.name().endsWith("SPADE")
-				|| material.name().endsWith("SWORD")
-				|| material.name().endsWith("HOE")
-				|| material.name().endsWith("BUCKET") // water, milk, lava,..
-				|| material == Material.BOW
-				|| material == Material.FISHING_ROD
-				|| material == Remain.getMaterial("CLOCK", "WATCH")
-				|| material == Material.COMPASS
-				|| material == Material.FLINT_AND_STEEL;
+			|| material.name().endsWith("SPADE")
+			|| material.name().endsWith("SWORD")
+			|| material.name().endsWith("HOE")
+			|| material.name().endsWith("BUCKET") // water, milk, lava,..
+			|| material == Material.BOW
+			|| material == Material.FISHING_ROD
+			|| material == Remain.getMaterial("CLOCK", "WATCH")
+			|| material == Material.COMPASS
+			|| material == Material.FLINT_AND_STEEL;
 	}
 
 	/**
@@ -533,11 +524,11 @@ public final class BlockUtil {
 	 * @param material
 	 * @return
 	 */
-	public static boolean isArmor(Material material) {
+	public boolean isArmor(Material material) {
 		return material.name().endsWith("HELMET")
-				|| material.name().endsWith("CHESTPLATE")
-				|| material.name().endsWith("LEGGINGS")
-				|| material.name().endsWith("BOOTS");
+			|| material.name().endsWith("CHESTPLATE")
+			|| material.name().endsWith("LEGGINGS")
+			|| material.name().endsWith("BOOTS");
 	}
 
 	/**
@@ -546,7 +537,7 @@ public final class BlockUtil {
 	 * @param material the material
 	 * @return if block contains the partial name of {@link #SELECTION_BLOCKS}
 	 */
-	public static boolean isForBlockSelection(Material material) {
+	public boolean isForBlockSelection(Material material) {
 		if (!material.isBlock() || material == Material.AIR)
 			return false;
 
@@ -574,7 +565,7 @@ public final class BlockUtil {
 	 * @param location
 	 * @return the y coordinate, or -1 if not found
 	 */
-	public static int findHighestBlockNoSnow(Location location) {
+	public int findHighestBlockNoSnow(Location location) {
 		return findHighestBlockNoSnow(location.getWorld(), location.getBlockX(), location.getBlockZ());
 	}
 
@@ -587,7 +578,7 @@ public final class BlockUtil {
 	 * @param z
 	 * @return the y coordinate, or -1 if not found
 	 */
-	public static int findHighestBlockNoSnow(World world, int x, int z) {
+	public int findHighestBlockNoSnow(World world, int x, int z) {
 		for (int y = world.getMaxHeight(); y > 0; y--) {
 			final Block block = world.getBlockAt(x, y, z);
 
@@ -606,7 +597,7 @@ public final class BlockUtil {
 	 * @param predicate
 	 * @return the y coordinate, or -1 if not found
 	 */
-	public static int findHighestBlock(Location location, Predicate<Material> predicate) {
+	public int findHighestBlock(Location location, Predicate<Material> predicate) {
 		return findHighestBlock(location.getWorld(), location.getBlockX(), location.getBlockZ(), predicate);
 	}
 
@@ -620,7 +611,7 @@ public final class BlockUtil {
 	 * @param predicate
 	 * @return the y coordinate, or -1 if not found
 	 */
-	public static int findHighestBlock(World world, int x, int z, Predicate<Material> predicate) {
+	public int findHighestBlock(World world, int x, int z, Predicate<Material> predicate) {
 		for (int y = world.getMaxHeight(); y > 0; y--) {
 			final Block block = world.getBlockAt(x, y, z);
 
@@ -644,7 +635,7 @@ public final class BlockUtil {
 	 * @param velocity
 	 * @return
 	 */
-	public static FallingBlock shootBlock(Block block, Vector velocity) {
+	public FallingBlock shootBlock(Block block, Vector velocity) {
 		return shootBlock(block, velocity, 0D);
 	}
 
@@ -657,7 +648,7 @@ public final class BlockUtil {
 	 * @param burnOnFallChance from 0.0 to 1.0
 	 * @return
 	 */
-	public static FallingBlock shootBlock(Block block, Vector velocity, double burnOnFallChance) {
+	public FallingBlock shootBlock(Block block, Vector velocity, double burnOnFallChance) {
 		if (!canShootBlock(block))
 			return null;
 
@@ -689,7 +680,7 @@ public final class BlockUtil {
 	 * @param block
 	 * @return
 	 */
-	private static boolean canShootBlock(Block block) {
+	private boolean canShootBlock(Block block) {
 		final Material material = block.getType();
 
 		return !CompMaterial.isAir(material) && (material.toString().contains("STEP") || material.toString().contains("SLAB") || BlockUtil.isForBlockSelection(material));
@@ -700,7 +691,7 @@ public final class BlockUtil {
 	 *
 	 * @param block
 	 */
-	private static void scheduleBurnOnFall(FallingBlock block) {
+	private void scheduleBurnOnFall(FallingBlock block) {
 		EntityUtil.trackFalling(block, () -> {
 			final Block upperBlock = block.getLocation().getBlock().getRelative(BlockFace.UP);
 
@@ -713,15 +704,15 @@ public final class BlockUtil {
 	// Helper classes
 	// ------------------------------------------------------------------------------------------------------------
 
-	private static VectorHelper getMinimumPoint(Location pos1, Location pos2) {
+	private VectorHelper getMinimumPoint(Location pos1, Location pos2) {
 		return new VectorHelper(Math.min(pos1.getX(), pos2.getX()), Math.min(pos1.getY(), pos2.getY()), Math.min(pos1.getZ(), pos2.getZ()));
 	}
 
-	private static VectorHelper getMaximumPoint(Location pos1, Location pos2) {
+	private VectorHelper getMaximumPoint(Location pos1, Location pos2) {
 		return new VectorHelper(Math.max(pos1.getX(), pos2.getX()), Math.max(pos1.getY(), pos2.getY()), Math.max(pos1.getZ(), pos2.getZ()));
 	}
 
-	private static int getHeight(Location pos1, Location pos2) {
+	private int getHeight(Location pos1, Location pos2) {
 		final VectorHelper min = getMinimumPoint(pos1, pos2);
 		final VectorHelper max = getMaximumPoint(pos1, pos2);
 
@@ -764,8 +755,8 @@ public final class BlockUtil {
 
 		public double distance(VectorHelper other) {
 			return Math.sqrt(Math.pow(other.x - x, 2) +
-					Math.pow(other.y - y, 2) +
-					Math.pow(other.z - z, 2));
+				Math.pow(other.y - y, 2) +
+				Math.pow(other.z - z, 2));
 		}
 
 		public VectorHelper normalize() {

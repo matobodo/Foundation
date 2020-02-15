@@ -1,15 +1,14 @@
 package org.mineacademy.fo;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.mineacademy.fo.exception.FoException;
+import org.mineacademy.fo.plugin.SimplePlugin;
+
+import javax.annotation.Nullable;
+import java.io.*;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -27,27 +26,16 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.annotation.Nullable;
-
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.mineacademy.fo.exception.FoException;
-import org.mineacademy.fo.plugin.SimplePlugin;
-
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-
 /**
  * Utility class for managing files.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class FileUtil {
+@UtilityClass
+public class FileUtil {
 
 	/**
 	 * Return the name of the file from the given path, stripping
 	 * any extension and folders.
-	 *
+	 * <p>
 	 * Example: classes/Archer.yml will only return Archer
 	 *
 	 * @param path
@@ -60,7 +48,7 @@ public final class FileUtil {
 	/**
 	 * Return the name of the file from the given path, stripping
 	 * any extension and folders.
-	 *
+	 * <p>
 	 * Example: classes/Archer.yml will only return Archer
 	 *
 	 * @param path
@@ -114,7 +102,7 @@ public final class FileUtil {
 
 	/**
 	 * Create a new file in our plugin folder, supporting multiple directory paths
-	 *
+	 * <p>
 	 * Example: logs/admin/console.log or worlds/nether.yml are all valid paths
 	 *
 	 * @param path
@@ -176,7 +164,7 @@ public final class FileUtil {
 
 	/**
 	 * Checks if the file in the path exists and creates a new one if it does not
-	 *
+	 * <p>
 	 * NB: THIS PATH IS ABSOLUTE, I.E. NOT IN YOUR PLUGINS FOLDER
 	 *
 	 * @param path
@@ -188,7 +176,7 @@ public final class FileUtil {
 
 	/**
 	 * Checks if the file in the parent and child path exists and creates a new one if it does not
-	 *
+	 * <p>
 	 * NB: THIS PATH IS ABSOLUTE, I.E. NOT IN YOUR PLUGINS FOLDER
 	 *
 	 * @param parent
@@ -201,7 +189,7 @@ public final class FileUtil {
 
 	/**
 	 * Checks if the file exists and creates a new one if it does not
-	 *
+	 * <p>
 	 * NB: THIS PATH IS ABSOLUTE, I.E. NOT IN YOUR PLUGINS FOLDER
 	 *
 	 * @param file
@@ -292,12 +280,12 @@ public final class FileUtil {
 
 	/**
 	 * Write a line to file with optional prefix which can be null.
-	 *
+	 * <p>
 	 * The line will be as follows: [date] prefix msg
 	 *
-	 * @param to     	path to the file inside the plugin folder
-	 * @param prefix 	optional prefix, can be null
-	 * @param message   line, is split by \n
+	 * @param to      path to the file inside the plugin folder
+	 * @param prefix  optional prefix, can be null
+	 * @param message line, is split by \n
 	 */
 	public static void writeFormatted(String to, String prefix, String message) {
 		message = Common.stripColors(message).trim();
@@ -370,7 +358,6 @@ public final class FileUtil {
 	 * No action is done if the file already exists.
 	 *
 	 * @param path the path to the file inside the plugin
-	 *
 	 * @return the extracted file
 	 */
 	public static File extract(String path) {
@@ -381,10 +368,9 @@ public final class FileUtil {
 	 * Copy file our plugin jar to destination, replacing variables in that file before it is saved
 	 * No action is done if the file already exists.
 	 *
-	 * @param path the path to the file inside the plugin
+	 * @param path     the path to the file inside the plugin
 	 * @param replacer the variables replacer, takes in a variable (you must put brackets around it) and outputs
-	 * the desired string
-	 *
+	 *                 the desired string
 	 * @return the extracted file
 	 */
 	public static File extract(String path, Function<String, String> replacer) {
@@ -425,7 +411,6 @@ public final class FileUtil {
 	 * @param to       the path where the file will be copyed inside the plugin
 	 *                 folder
 	 * @param replacer the variables replacer
-	 *
 	 * @return the extracted file
 	 */
 	public static File extract(boolean override, String from, String to, @Nullable Function<String, String> replacer) {
@@ -458,8 +443,8 @@ public final class FileUtil {
 
 		} catch (final IOException ex) {
 			Common.error(ex,
-					"Failed to extract " + from + " to " + to,
-					"Error: %error");
+				"Failed to extract " + from + " to " + to,
+				"Error: %error");
 		}
 
 		return file;
